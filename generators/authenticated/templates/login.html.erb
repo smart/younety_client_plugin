@@ -1,0 +1,30 @@
+<h1>Login</h1>
+
+<%% form_tag <%= controller_plural_name %>_path do -%>
+<p><label for="login">Login</label><br/>
+<%%= text_field_tag 'login' %></p>
+
+<p><label for="password">Password</label><br/>
+<%%= password_field_tag 'password' %></p>
+
+<p><label for="remember_me">Remember me:</label>
+<%%= check_box_tag 'remember_me' %></p>
+
+<p>
+  ...or use:
+</p>
+
+<p>
+  <label for="openid_url">OpenID:</label>
+  <%%= text_field_tag "openid_url" %>
+</p>
+
+<p>
+  <label for="facebook">Facebook Login?</label>
+  <%%= check_box_tag 'facebook' %> </p>
+
+<p>
+  <%%= submit_tag 'Sign in', :disable_with => "Signing in&hellip;" %>
+  <%%= link_to 'Register', signup_url %>
+</p>
+<%% end -%>
