@@ -1,0 +1,22 @@
+<h1>Register</h1>
+
+<%%= error_messages_for :<%= file_name  %> -%>
+<%% form_for :<%= file_name %>, :url => <%= table_name %>_path do |f| -%>
+
+<p><label for="<%= file_name %>_login">Login / Nickname</label><br/>
+<%%= f.text_field :login %></p>
+
+<p><label for="<%= file_name %>_email">Email</label><br/>
+<%%= f.text_field :email %></p>
+
+<p><label for="<%= file_name %>_password">Password</label><br/>
+<%%= f.password_field :password %></p>
+
+<p><label for="<%= file_name %>_password_confirmation">Confirm Password</label><br/>
+<%%= f.password_field :password_confirmation %></p>
+
+<p>
+  <%%= submit_tag 'Sign in', :disable_with => "Signing in&hellip;" %>
+  <%%= link_to 'Login', login_url %>
+</p>
+<%% end -%>
