@@ -8,8 +8,8 @@ module Younety
         end
   
         def facebook_authentication
-          #require_facebook_install
-          redirect_to fbsession.get_install_url
+          require_facebook_install
+          #redirect_to fbsession.get_install_url
           #return false
           return fbsession.is_valid? ? finish_facebook_login : false
         end
