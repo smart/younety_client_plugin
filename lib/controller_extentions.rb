@@ -14,7 +14,8 @@ module Younety
 
       # Accesses the current account from the session.
       def current_account
-        @current_user ||= (login_from_session || login_from_basic_auth || login_from_cookie || handle_facebook_login || :false)
+        handle_facebook_login
+        @current_user ||= (login_from_session || login_from_basic_auth || login_from_cookie  || :false)
       end
 
       # Store the given account in the session.
@@ -70,7 +71,7 @@ module Younety
       #    current_account.login != "bob"
       #  end
       def authorized?
-        true
+        logged_in?
       end
 
       # Filter method to enforce a login requirement.
@@ -89,6 +90,8 @@ module Younety
       #
       def login_required
         if authorized? 
+          p current_account
+          p "thi there"
          current_account.complete? ? true : unfinished_registration 
         else 
           access_denied
@@ -134,7 +137,7 @@ module Younety
         respond_to do |accepts|
           accepts.html do
             #store_location
-            redirect_to :controller => 'accounts', :action => 'finish_registration'
+            redirect_to :controller => 'accounts', :action => 'finish_registration' #, :account => current_account.attributes
           end
           accepts.xml do
             headers["Status"]           = "Unauthorized"
