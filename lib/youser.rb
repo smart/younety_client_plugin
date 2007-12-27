@@ -157,8 +157,8 @@ module Youser
         unless current_account.complete?
           unfinished_registration
         else
-          redirect_to("/") and return false
-          #redirect_back_or_default('/')
+          #redirect_to("/") and return false
+          redirect_back_or_default('/')
           flash[:notice] = "Logged in successfully"
         end
       end
