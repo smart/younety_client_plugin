@@ -44,3 +44,10 @@ p YOUNETY
 
 require "remote/lib/younety_resource"
 require "remote/lib/younety_token"
+require "remote/lib/adi"
+require "remote/lib/auth"
+require "remote/lib/customization"
+require "remote/lib/data_element"
+require "remote/lib/share"
+require "remote/lib/stat"
+require "remote/lib/structure"
