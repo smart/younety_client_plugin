@@ -22,7 +22,7 @@ class <%= model_controller_class_name %>Controller < ApplicationController
   end
 
   def create
-    @local_<%= file_name %> = LocalUser.new(params[:<%= file_name %>])
+    @local_user = LocalUser.new(params[:<%= file_name %>])
     if @local_user.save!
       successful_local_user_login
       return false

@@ -90,8 +90,6 @@ module Younety
       #
       def login_required
         if authorized? 
-          p current_account
-          p "thi there"
          current_account.complete? ? true : unfinished_registration 
         else 
           access_denied

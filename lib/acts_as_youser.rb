@@ -42,6 +42,11 @@ module Younety
             return true
           end
 
+          #def publish_to_feed(fbml)
+          #  fbsession.user_setFbml()
+          #  
+          #end
+          
           def remember_token?
             remember_token_expires_at && Time.now.utc < remember_token_expires_at 
           end
@@ -71,6 +76,18 @@ module Younety
           def encrypt(password)
             self.class.encrypt(password, salt)
           end
+          
+          def facebook_youser?
+            a = self.youser_authenticators.find_by_type('FacebookYouser')
+            a.nil? ? false : true
+          end
+          
+          def facebook
+            a = self.youser_authenticators.find_by_type('FacebookYouser')
+            return false if a.nil?
+            return a
+          end
+          
         end
       end
     end
