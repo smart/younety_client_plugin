@@ -13,6 +13,17 @@ module Younety
         #def commit
         #  Customization.put(:commit, :adi_id => @prefix_options[:adi_id])
         #end
+        
+        def self.set_value(adi_id, customization_name, value, image_data = nil)
+          unless image_data.blank?
+            custom = Customization.find(customization_name, :params => {:adi_id => adi_id})
+            custom.image_data = image_data
+            custom.draft_value = value
+            custom.save
+          else
+            Customization.new(:id => customization_name, :adi_id => adi_id).put(:set_value, :customization => {:draft_value => value})
+          end
+        end
     
     
         def icon_class
