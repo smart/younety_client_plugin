@@ -11,7 +11,7 @@ module Younety
         
           def find_by_authentication(identifier, auth_type)
             token = Younety::Remote::YounetyToken.create({:identifier => identifier, :authenticator_id => auth_type}).id
-            Account.find_by_younety_token(token, :include => :account)
+            Account.find_by_younety_token(token)
           end
           
           def find_or_create_by_authentication(identifier, auth_type, attribs = {})
@@ -19,6 +19,7 @@ module Younety
             attribs[:younety_token] = token
             Account.find_or_create_by_younety_token(attribs)
           end
+            
           
           # Encrypts some data with the salt.
           def encrypt(password, salt)
@@ -46,6 +47,16 @@ module Younety
           #  fbsession.user_setFbml()
           #  
           #end
+          
+          def add_youser_authenticator(identifier, auth_type, attribs = {})
+            response = Younety::Remote::YounetyToken.add_youser_authenticator(self.younety_token, {:identifier => identifier, :auth_type => auth_type})
+            if response == true
+              self.youser_authenticatiors.create(:identifier => identifier, :auth_type => auth_type)
+              return true
+            else
+              raise 
+            end
+          end
           
           def remember_token?
             remember_token_expires_at && Time.now.utc < remember_token_expires_at 
