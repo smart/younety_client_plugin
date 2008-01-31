@@ -51,7 +51,7 @@ module Younety
           def add_youser_authenticator(identifier, auth_type, attribs = {})
             response = Younety::Remote::YounetyToken.add_youser_authenticator(self.younety_token, {:identifier => identifier, :auth_type => auth_type})
             if response == true
-              self.youser_authenticatiors.create(:identifier => identifier, :auth_type => auth_type)
+              self.youser_authenticators.create(:identifier => identifier, :auth_type => auth_type)
               return true
             else
               raise 
