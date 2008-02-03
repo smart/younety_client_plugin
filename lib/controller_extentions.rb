@@ -4,7 +4,9 @@ require 'authenticators/local_user_authenticator'
 module Younety
   module Rails
     module ControllerExtensions
-      
+      include Younety::Youser::Authenticators::OpenIdAuthenticator
+      include Younety::Youser::Authenticators::FacebookAuthenticator
+      include Younety::Youser::Authenticators::LocalUserAuthenticator
       
       # Returns true or false if the account is logged in.
       # Preloads @current_account with the account model if they're logged in.
@@ -14,8 +16,7 @@ module Younety
 
       # Accesses the current account from the session.
       def current_account
-        handle_facebook_login
-        @current_user ||= (login_from_session || login_from_basic_auth || login_from_cookie  || :false)
+        @current_account ||= (login_from_session || login_from_basic_auth || login_from_cookie  || facebook_authentication || :false)
       end
 
       # Store the given account in the session.
@@ -35,7 +36,7 @@ module Younety
         #added work around for sanity sake check this out
         if username && passwd
           local_user = LocalUser.authenticate(username, passwd)
-          self.current_user = Account.find_by_id(local_user.account_id)
+          self.current_account = Account.find_by_id(local_user.account_id)
         end
       end
 
@@ -49,14 +50,7 @@ module Younety
         end
       end
       
-      def youser_login
-        login_from_cookie || handle_facebook_login
-      end
       
-      include Younety::Youser::Authenticators::OpenIdAuthenticator
-      include Younety::Youser::Authenticators::FacebookAuthenticator
-      include Younety::Youser::Authenticators::LocalUserAuthenticator
-
       protected
       # Check if the account is authorized.
       #
@@ -163,7 +157,7 @@ module Younety
             open_id_authentication
             return false
           when "Facebook"
-            facebook_authentication
+            require_facebook_login
             return false
           when "LocalUser"
             local_user_authentication
@@ -177,12 +171,16 @@ module Younety
       #if one of the authenticatos is successful this is called
 
        def successful_login
+         if current_account.facebook_youser? &&  !self.current_account.facebook.appAdded?
+           redirect_to fbsession.get_install_url and return
+         end
+         
         unless current_account.complete?
           unfinished_registration
         else
-          #redirect_to("/") and return false
           redirect_back_or_default('/')
           flash[:notice] = "Logged in successfully"
+          return false
         end
       end
 

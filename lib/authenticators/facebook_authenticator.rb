@@ -6,38 +6,33 @@ module Younety
         def using_facebook?(facebook = params[:facebook])
           params[:facebook] ? true : false
         end
-  
-        def facebook_authentication
-          require_facebook_login
-          
-          #return false
-          return fbsession.is_valid? ? finish_facebook_login : false
-        end
         
-        def add_facebook_to_account
-          self.current_account = Account.find(session[:existing_youser])
-          fb = FacebookYouser.find_or_initialize_by_facebook_session(fbsession)
-          if !fb.account_id.nil? && fb.account_id != current_account.id 
-            flash[:notice] = "This Facebook Account is already mapped to another account email admin@bokayme.com if you didn't expect this"
-            redirect_back_or_default("/")
-            return false
-          end
-          fb.account_id = current_account.id
-          fb.save
-          current_account.reload
-          session[:existing_user] = nil
-        end
-  
-        def finish_facebook_login
-          if session[:existing_youser]
-           add_facebook_to_account 
-          else
-            facebook_user = FacebookYouser.find_or_create_by_facebook_session(fbsession)
-            self.current_account = Account.find(facebook_user.account_id)
-            unless self.current_account.facebook.appAdded?
+        
+        def app_install_required
+          respond_to do |accepts|
+            accepts.all do
+              store_location if session[:return_to].nil?
               redirect_to fbsession.get_install_url and return
             end
           end
+          false
+        end
+  
+        def facebook_authentication
+          #ensure your token is good
+          return nil if !fbsession.ready? 
+          
+          facebook_youser = FacebookYouser.find_or_initialize_by_facebook_session(fbsession)
+          if session[:existing_youser] 
+            #set id or fail if join conditions are bad
+            (!facebook_youser.account_id.nil? && fb.account_id != current_account.id) ? invalid_account_join : facebook_youser.account_id = session[:existing_youser]
+          end
+          facebook_youser.save  
+          self.current_account = Account.find(facebook_youser.account_id)
+        end        
+         
+        def finish_facebook_login
+          facebook_authentication      
           logged_in? ? successful_login : failed_login( "Failed Authentication")
         end
     

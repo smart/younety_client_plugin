@@ -43,10 +43,6 @@ module Younety
             return true
           end
 
-          #def publish_to_feed(fbml)
-          #  fbsession.user_setFbml()
-          #  
-          #end
           
           def add_youser_authenticator(identifier, auth_type, attribs = {})
             response = Younety::Remote::YounetyToken.add_youser_authenticator(self.younety_token, {:identifier => identifier, :auth_type => auth_type})
@@ -89,14 +85,7 @@ module Younety
           end
           
           def facebook_youser?
-            a = self.youser_authenticators.find_by_type('FacebookYouser')
-            a.nil? ? false : true
-          end
-          
-          def facebook
-            a = self.youser_authenticators.find_by_type('FacebookYouser')
-            return false if a.nil?
-            return a
+            self.facebook.nil? ? false : true
           end
           
         end

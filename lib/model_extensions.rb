@@ -17,6 +17,7 @@ module Younety
         
         def acts_as_youser
           has_many :youser_authenticators
+          has_one :facebook, :class_name => "FacebookYouser", :foreign_key => "account_id"
           #with_options :foreign_key => 'parent_id' do |m|
           #  m.has_many   :thumbnails, :dependent => :destroy, :class_name => options[:thumbnail_class].to_s
           #  m.belongs_to :parent, :class_name => self.base_class.to_s
@@ -129,34 +130,6 @@ module Younety
             #end
           end
           
-          def get_facebook_uid
-            #extend this in your model if this is not how you get your facebook id
-            begin
-              return self.facebook_uid
-            rescue
-              nil
-            end
-          end
-          
-          def get_open_id 
-            begin
-              return self.open_id
-            rescue
-              nil
-            end
-          end
-          
-          def get_username
-            begin
-              return self.username
-            rescue
-              nil
-            end
-          end
-          
-          def merits
-          
-          end
           
           def scores
             score_array = {}
