@@ -21,7 +21,7 @@ class FacebookYouser < YouserAuthenticator
   end
   
   def self.find_or_initialize_by_facebook_session(sess)
-    unless sess.is_ready?
+    unless sess.ready?
       RAILS_DEFAULT_LOGGER.info "** RFACEBOOK WARNING: tried to use an inactive session for acts_as_facebook_user (in find_or_create_by_facebook_session)"
       return nil
     end
