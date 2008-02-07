@@ -50,6 +50,10 @@ module Younety
         end
       end
       
+      def login_via_youser
+        facebook_authentication
+      end
+      
       
       protected
       # Check if the account is authorized.
