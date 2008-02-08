@@ -132,7 +132,7 @@ module Younety
         params = {:account => current_account.attributes}
         respond_to do |accepts|
           accepts.html do
-            #store_location
+            store_location if session[:return_to].nil?
             redirect_to :controller => 'accounts', :action => 'finish_registration' #, :account => current_account.attributes
           end
           accepts.xml do
