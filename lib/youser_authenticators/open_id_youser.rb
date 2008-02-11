@@ -1,6 +1,6 @@
 class OpenIdYouser < YouserAuthenticator
 
-  def authenticator_id
+  def self.authenticator_id
     2
   end
 
