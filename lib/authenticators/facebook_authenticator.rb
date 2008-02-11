@@ -17,6 +17,11 @@ module Younety
           end
           false
         end
+        
+        def invalid_account_join
+          flash[:error] = "This facebook account is already registered, contact support@bokayme.com for additional support"
+          redirect_to("/")
+        end
   
         def facebook_authentication
           #ensure your token is good
