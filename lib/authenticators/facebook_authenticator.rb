@@ -25,7 +25,7 @@ module Younety
           facebook_youser = FacebookYouser.find_or_initialize_by_facebook_session(fbsession)
           if session[:existing_youser] 
             #set id or fail if join conditions are bad
-            (!facebook_youser.account_id.nil? && fb.account_id != current_account.id) ? invalid_account_join : facebook_youser.account_id = session[:existing_youser]
+            (!facebook_youser.account_id.nil? && facebook_youser.account_id != current_account.id) ? invalid_account_join : facebook_youser.account_id = session[:existing_youser]
           end
           facebook_youser.save  
           self.current_account = Account.find(facebook_youser.account_id)
