@@ -36,6 +36,7 @@ module Younety
         #added work around for sanity sake check this out
         if username && passwd
           local_user = LocalUser.authenticate(username, passwd)
+          return nil if local_user.nil?
           self.current_account = Account.find_by_id(local_user.account_id)
         end
       end
