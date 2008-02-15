@@ -8,7 +8,8 @@ module Younety
         # Be sure to yield registration, a third argument in the #authenticate_with_open_id block.
         # REMEMBER: a "required" field is not guaranteed to be returned by OpenID provider
         def open_id_authentication
-          authenticate_with_open_id(params[:openid_url].strip, 
+          params[:openid_url] = params[:openid_url].strip if params[:openid_url]
+          authenticate_with_open_id(params[:openid_url], 
           :required => [ :nickname ],
           :optional => [ :email, :fullname ]) do |result, identity_url, registration|
             if result.successful?
