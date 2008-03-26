@@ -230,9 +230,12 @@ module Younety
            Younety::Remote::Customization.find( URI::escape(name), :params => { :adi_id => self.adi_id } )
          end
 
-
-         def set_customization(name, value = '' , image_data = nil )
-             Younety::Remote::Customization.set_value(self.adi_id, name, value, image_data )
+         def set_customization_option(customization, option_name, option_value, image_data = nil ) 
+          Younety::Remote::Customization.set_value(self.adi_id, customization.name, option_value, image_data )
+         end
+ 
+         def set_customization_value(customization, value = '' , image_data = nil )
+             Younety::Remote::Customization.set_value( self.adi_id , URI::escape(customization.name) , value, image_data )
          end
          
          def reset_customizations
