@@ -18,8 +18,6 @@ module Younety
 
         module InstanceMethods 
 
-          ADISERVER = "http://0.0.0.0:3001" #TODO figure out where this constant should be set , is this younety.yml config thing?
-
           #local caching methods
 
           def adi 
@@ -29,11 +27,11 @@ module Younety
           end
 
           def remote_path(ext = 'gif')
-            "#{ADISERVER}/adis/#{self.adi_id}.#{ext}" 
+            "#{YOUNETY['url']}/adis/#{self.adi_id}.#{ext}" 
           end
 
           def draft_url(ext = 'gif')
-            "#{ADISERVER}/adis/#{self.adi_id}.#{ext}?draft=true" 
+            "#{YOUNETY['url']}/adis/#{self.adi_id}.#{ext}?draft=true" 
           end
 
           def save_thumbnails(thumbs = [], opts = {}) #TODO consolidate into a utilities directory
@@ -138,8 +136,8 @@ module Younety
           def share_adi(share_id, params = {})
             Share.share_it(share_id, self.adi_id, params )  
           end
-
-        scrend  
+        
+        end
         
       end
     end

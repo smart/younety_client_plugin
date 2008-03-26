@@ -17,12 +17,9 @@ module Younety
           def example_adi_id
             self.structure.example_adi_id
           end
-          
-          ADISERVER = "http://localhost:3001"
-          #ADISERVER = YOUNETY['url'] #TODO figure out where this constant should be set , is this younety.yml config thing?
 
           def example_path(ext = 'gif')
-            "#{ADISERVER}/adis/#{self.example_adi_id}.#{ext}" 
+            "#{YOUNETY['url']}/adis/#{self.example_adi_id}.#{ext}" 
           end
 
           def customizables 
@@ -78,8 +75,8 @@ module Younety
 
 
           def cache_root
-            "public/cache/structures/#{self.structure_id}"
-            #"#{YOUNETY['image_cache_path']}structures/#{self.structure_id}"
+            #{}"public/cache/structures/#{self.structure_id}"
+            "#{YOUNETY['image_cache_path']}structures/#{self.structure_id}"
           end
         end
       end

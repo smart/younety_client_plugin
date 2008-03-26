@@ -46,7 +46,7 @@ module Younety
       end
   
       def public_path
-       "#{ADISERVER}/badges/#{self.public_id}" 
+       "#{YOUNETY['url']}/badges/#{self.public_id}" 
       end
   
       #depricated
