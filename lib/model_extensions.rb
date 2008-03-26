@@ -1,4 +1,6 @@
-require "acts_as_youser"
+require 'acts_as_structure'
+require 'acts_as_youser'
+require 'acts_as_adi'
 require 'RMagick'      
 module Younety
   module Rails
@@ -11,9 +13,14 @@ module Younety
       end
 
       module ActsAsMethods # :nodoc:all
-        def acts_as_younety_user
-          include Younety::Rails::ModelExtensions::ActsAsYounetyUser::InstanceMethods
-          extend Younety::Rails::ModelExtensions::ActsAsYounetyUser::ClassMethods
+        def acts_as_structure
+          include Younety::Rails::ModelExtentions::ActsAsStructure::InstanceMethods
+          extend Younety::Rails::ModelExtentions::ActsAsStructure::ClassMethods        
+        end
+        
+        def acts_as_adi
+          include Younety::Rails::ModelExtentions::ActsAsAdi::InstanceMethods
+          extend Younety::Rails::ModelExtentions::ActsAsAdi::ClassMethods        
         end
         
         def acts_as_youser
@@ -36,235 +43,8 @@ module Younety
           @point_spec_type = options[:point_spec_type] || "SumPointSpec"
           @value_column = options[:value_column]  || :value 
         end
-
-        def acts_as_structure
-          include Younety::Rails::ModelExtensions::ActsAsStructure::InstanceMethods
-          extend Younety::Rails::ModelExtensions::ActsAsStructure::ClassMethods
-        end
-
-        def acts_as_adi
-         p 'hi'
-          include Younety::Rails::ModelExtensions::ActsAsAdi::InstanceMethods
-          extend Younety::Rails::ModelExtensions::ActsAsAdi::ClassMethods
-        end
-
       end
-
-   module ActsAsStructure
-     module ClassMethods
-     end
-
-     module InstanceMethods 
-
-         def structure
-           @structure ||= Younety::Remote::Structure.find(self.structure_id)
-           raise(Exception, "structure not valid") if @structure.nil?
-           @structure
-         end
-
-         def example_adi_id
-           self.structure.example_adi_id
-         end
-
-         ADISERVER = "http://0.0.0.0:3001" #TODO figure out where this constant should be set , is this younety.yml config thing?
-
-         def remote_path(ext = 'gif')
-           "#{ADISERVER}/adis/#{self.example_adi_id}.#{ext}" 
-         end
-
-
-         def retrieve_example_adi_file_data_from_adiserver
-            response = Net::HTTP.get_response(URI.parse(remote_path)) #TODO put in exception handling
-            image_data = Magick::Image.from_blob(response.body).first  
-            image_data
-         end
-
-         def save_thumbnails(thumbs = [], opts = {}) #TODO consolidate into a utilities directory
-           opts[:ext]  ||= 'gif'
-           image_data = self.retrieve_example_adi_file_data_from_adiserver
-           cache_original_file(image_data, opts) 
-           thumbs.each { |thumb| save_thumbnail(image_data, thumb, opts ) } 
-         end
-
-          def remove_thumbnails
-            FileUtils.rm_r(cache_root) 
-          end
-
-         def cache_original_file(image_data, opts)
-            FileUtils.mkdir_p(cache_root)
-            original_image_cache_path =  File.join(File.join(cache_root , "original.#{opts[:ext]}" ) )#TODO consolidate into a utilities directory  
-            image_data.write(original_image_cache_path)
-         end
-
-         def save_thumbnail(image_data, thumb , opts )#TODO consolidate into a utilities directory
-            raise(Exception, "size name not specfied" ) unless thumb.has_key?(:name)
-            raise(Exception, "width not specfied" ) unless thumb.has_key?(:width)
-            raise(Exception, "height name not specfied" ) unless thumb.has_key?(:height)
-            magick_method = opts[:magick_method] || 'resize_to_fit' # the default method is 'resize_to_fit' other valid ImageMagick transformations are possible
-            path = File.join(cache_root, "#{thumb[:name]}.#{opts[:ext]}" )
-            resized = image_data.send(magick_method.to_sym, thumb[:width], thumb[:height] )  
-            FileUtils.mkdir_p(cache_root)
-            resized.write(path)
-         end
-
-         def image_path(size = 'orginal', ext = 'gif')
-            "cache/structures/#{self.id}/#{size}.#{ext}"
-         end
-
-
-         def cache_root
-           "public/images/cache/structures/#{self.id}"
-         end
-
-
-     end
-
-   end #end module ActsAsStructure
-
-
-   module ActsAsAdi
-
-     module ClassMethods
-
-       def new_from_factory( factory )
-         obj = self.new
-         adi = Younety::Remote::Adi.create(:product_key => factory.structure_id, :auth_enabled => 0 )
-         obj.send( (factory.class.to_s.underscore + '_id=').to_sym , factory.id )
-         obj.adi_id = adi.id
-         obj.public_id = Digest::MD5.hexdigest( ( self.count * rand ).to_s ).to_s
-         obj
-       end
-
-     end
-
-     module InstanceMethods 
-
-         ADISERVER = "http://0.0.0.0:3001" #TODO figure out where this constant should be set , is this younety.yml config thing?
-
-         #local caching methods
-
-         def adi 
-           @adi ||= Younety::Remote::Adi.find(self.adi_id)
-             raise(Exception, "adi not valid") if @adi.nil?
-           @adi
-         end
-
-         def remote_path(ext = 'gif')
-           "#{ADISERVER}/adis/#{self.adi_id}.#{ext}" 
-         end
-
-         def draft_url(ext = 'gif')
-           "#{ADISERVER}/adis/#{self.adi_id}.#{ext}?draft=true" 
-         end
-
-         def save_thumbnails(thumbs = [], opts = {}) #TODO consolidate into a utilities directory
-           opts[:ext]  ||= 'gif'
-           image_data =  get_image_data_from_adiserver
-           cache_original_file(image_data, opts) 
-           thumbs.each { |thumb| save_thumbnail(image_data, thumb, opts ) } 
-         end 
-
-         def get_image_data_from_adiserver  #TODO consolidate into a utilities directory
-            response = Net::HTTP.get_response(URI.parse(remote_path)) #TODO put in exception handling
-            image_data = Magick::Image.from_blob(response.body).first  
-            image_data
-         end
-
-         def cache_original_file(image_data, opts)#TODO consolidate into a utilities directory
-            FileUtils.mkdir_p(cache_root)
-            original_image_cache_path =  File.join(File.join(cache_root , "original.#{opts[:ext]}" ) )  
-            image_data.write(original_image_cache_path)
-         end
-
-         def save_thumbnail(image_data, thumb , opts )#TODO consolidate into a utilities directory
-            raise(Exception, "size name not specfied" ) unless thumb.has_key?(:name)
-            raise(Exception, "width not specfied" ) unless thumb.has_key?(:width)
-            raise(Exception, "height name not specfied" ) unless thumb.has_key?(:height)
-            magick_method = opts[:magick_method] || 'resize_to_fit' # the default method is 'resize_to_fit' other valid ImageMagick transformations are possible
-            path = File.join(cache_root, "#{thumb[:name]}.#{opts[:ext]}" )
-            resized = image_data.send(magick_method.to_sym, thumb[:width], thumb[:height] )  
-            FileUtils.mkdir_p(cache_root)
-            resized.write(path)
-         end
-
-         def image_path(size = 'orginal', ext = 'gif')
-            "cache/adis/#{self.id}/#{size}.#{ext}"
-         end
-
-         def cache_root
-           "public/images/cache/adis/#{self.id}"
-         end
-
-         #adi methods 
-
-         def customizables  
-           @customizables ||= self.adi.customizables 
-         end
-       
-         def embed_code(format = "gif", pub = true, ismap = false )
-           @embed_code ||=  self.adi.embed_code(format, pub, ismap )
-         end
-
-         def statistics
-            @statistics ||= self.adi.stats_summary
-         end
-
-         def adi_public_path #TODO investigate whether or not this is broken and/or if it's necessary?
-            @adi_public_path ||= self.adi.public_path
-         end
-
-         def activate_adi 
-            self.adi.activate
-         end
-
-         def deactivate_adi 
-            self.adi.deactivate
-         end
-
-         def reset 
-            self.adi.reset
-         end
-
-         #customization methods 
-         def get_customization_by_name(name)
-           Younety::Remote::Customization.find( URI::escape(name), :params => { :adi_id => self.adi_id } )
-         end
-
-         def set_customization_option(customization, option_name, option_value, image_data = nil ) 
-          Younety::Remote::Customization.set_value(self.adi_id, customization.name, option_value, image_data )
-         end
- 
-         def set_customization_value(customization, value = '' , image_data = nil )
-             Younety::Remote::Customization.set_value( self.adi_id , URI::escape(customization.name) , value, image_data )
-         end
-         
-         def reset_customizations
-             Younety::Remote::Customization.reset( self.adi_id )
-             @customizations = {} #clear the cache of customizations
-         end
-
-         def commit_customizations
-             Younety::Remote::Customization.commit( self.adi_id )
-         end
-
-         def icon_class 
-            #TODO what do we do about this method
-         end
-
-         # share methods
-         def find_all_shares_by_webapp_id(webapp_id)
-            Younety::Remote::Share.find_all_by_webapp_id(webapp_id)
-         end
-
-         def share_adi(share_id, params = {})
-            Share.share_it(share_id, self.adi_id, params )  
-         end
-
-     end
-
-   end #end module ActsAsAdi
-      
-      
+            
      module ActsAsPointSpec
         
           module ClassMethods
