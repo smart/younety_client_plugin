@@ -23,7 +23,8 @@ module Younety
           end
 
           def customizables 
-            @customizables ||= structure.customizables
+            #@customizables ||= structure.customizables
+            #Younety::Remote::Customizable.find( URI::escape(name), :params => { :adi_id => self.adi_id } )
           end
           
           def customizable(name)

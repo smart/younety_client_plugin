@@ -74,9 +74,6 @@ module Younety
 
            #adi methods 
 
-          def customizables  
-            @customizables ||= self.adi.customizables 
-          end
 
           def embed_code(format = "gif", pub = true, ismap = false )
             @embed_code ||=  self.adi.embed_code(format, pub, ismap )
@@ -103,16 +100,31 @@ module Younety
           end
 
           #customization methods 
-          def get_customization_by_name(name)
+
+          def customizables #TODO figure out why this is not caching  
+            @customizables ||= Younety::Remote::Customizable.find(:all, :params => { :structure_id => self.adi.structure_id } ) 
+          end
+
+          def customizable(customizable_id) 
+             Younety::Remote::Customizable.find(:first, :params => {:id => customizable_id , :structure_id => self.adi.structure_id } ) 
+          end
+
+          def get_customization_by_name(name) # Deprecated?
             Younety::Remote::Customization.find( URI::escape(name), :params => { :adi_id => self.adi_id } )
           end
 
-          def set_customization_option(customization, option_name, option_value, image_data = nil ) 
-            Younety::Remote::Customization.set_value(self.adi_id, customization.name, option_value, image_data )
+          def set_customization_option(customizable, option_name, option_value, image_data = nil ) 
+            @customization = get_customization_by_name(customizable.name)
+            p '------------------------'
+            p '------------------------'
+            p @customization 
+            p '------------------------'
+            p '------------------------'
+            Younety::Remote::Customization.set_value(self.adi_id,  URI::escape(@customization.name), option_value, image_data )
           end
 
           def set_customization_value(customization, value = '' , image_data = nil )
-            Younety::Remote::Customization.set_value( self.adi_id , URI::escape(customization.name) , value, image_data )
+            Younety::Remote::Customization.set_value( self.adi_id , URI::escape(customizable.name) , value, image_data )
           end
 
           def reset_customizations

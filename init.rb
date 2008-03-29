@@ -59,8 +59,6 @@ ActionView::Base.send(:include, Younety::Rails::ViewExtensions)
 ActionController::Base.send(:include, Younety::Rails::ControllerExtensions)
 ActiveRecord::Base.send(:include, Younety::Rails::ModelExtensions)
 
-
-
 require "remote/lib/younety_resource"
 require "remote/lib/younety_token"
 require "remote/lib/adi"
@@ -71,3 +69,5 @@ require "remote/lib/share"
 require "remote/lib/stat"
 require "remote/lib/structure"
 require "remote/lib/webapp"
+require "remote/lib/customizable"
+require "remote/lib/option"

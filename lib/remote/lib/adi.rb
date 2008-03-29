@@ -32,15 +32,7 @@ module Younety
       def customizations
        self.get(:customizations)
       end
- 
-      def customizables
-       a = []
-       self.get(:customizations).each do |customization|
-           a << Customization.new(customization) 
-        end
-       a
-      end
-      
+
       def embed_code(format = "gif", pub = true, ismap = false)
         self.get(:embed_code, {:adi_format => format, :public => pub, :ismap => ismap})
       end
@@ -55,27 +47,6 @@ module Younety
       end
     end
 
-    class AdiCustomization 
-       attr_accessor :id,:name,:default_value,:current_value,:custom_options,:user_tag,:customizable_type,:draft_value,:validation_rules,:options
-       def initialize(hash)
-         hash.each_pair do |k,v|
-            self.send( k + '=', v)  
-          end
-          self.options=[]
-          return if self.custom_options.nil?
-          self.custom_options.each do |name, value|
-            self.options << CustomizationOption.new(name, value)
-          end
-       end
-     end
 
-     class CustomizationOption
-        attr_accessor :name, :value
-        def initialize(name, value)
-          self.name  = name 
-          self.value = value 
-        end
-     end
- 
   end
 end
