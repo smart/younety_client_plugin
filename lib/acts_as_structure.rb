@@ -33,7 +33,7 @@ module Younety
           
           def retrieve_example_adi_file_data_from_adiserver(ext = "gif")
             begin
-              Magick::Image.read(URI.parse(example_path(ext)))  # I think you can do this
+              Magick::ImageList.new(URI.parse(example_path(ext)))  # I think you can do this
             rescue
               raise(Exception, "Unable to load remote adi")
             end
@@ -71,7 +71,7 @@ module Younety
           end
 
           def image_path(size = 'orginal', ext = 'gif')
-            "cache/structures/#{self.id}/#{size}.#{ext}"
+            "cache/structures/#{self.structure_id}/#{size}.#{ext}"
           end
 
 
