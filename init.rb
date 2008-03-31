@@ -29,7 +29,7 @@
 
 
 # You can override these defaults in younety.yml
-::YOUNETY = { "image_cache_path" => "public/cache/"}
+::YOUNETY = { "image_cache_path" => "public/images/cache/"}
 begin
   yamlFile = YAML.load_file("#{RAILS_ROOT}/config/younety.yml")
 rescue Exception => e
