@@ -49,6 +49,32 @@ module Younety
             thumbs.each { |thumb| save_thumbnail(image_data, thumb, opts ) } 
           end
 
+          def cache_image_customization_options(sizes = [] , opts = {})    
+            customizables = Younety::Remote::Customizable.find(:all, :params => { :structure_id => self.structure_id } ) 
+            customizables.each do |customizable|
+                cache_customizable_options(customizable) if customizable.customizable_type =~ /image/i
+            end
+          end
+
+          def cache_customizable_options(customizable, opts = {})
+            customizable.options.each do |option| 
+               FileUtils.mkdir_p( option_cache_path(customizable) )
+               ext = option.option.match(/.*\.(\w+)/)[1]
+               remote_path =  "#{YOUNETY['url']}/structures/#{self.structure_id}/customizables/#{customizable.id}/options/#{option.id}.#{ext}"
+               response = Net::HTTP.get_response(URI.parse(remote_path)) #TODO put in exception handling
+               image_data = Magick::Image.from_blob(response.body).first  
+               image_data.write(customizable_option_cache_file_path(customizable, option) )
+            end
+          end
+
+          def option_cache_path(customizable)
+             "#{cache_root}/options/#{customizable.id.to_s}/" 
+          end
+
+          def customizable_option_cache_file_path(customizable, option)
+             File.join(option_cache_path(customizable) +  option.option) 
+          end
+
           def remove_thumbnails
             FileUtils.rm_r(cache_root) 
           end
@@ -76,9 +102,9 @@ module Younety
 
 
           def cache_root
-            #{}"public/cache/structures/#{self.structure_id}"
             "#{YOUNETY['image_cache_path']}structures/#{self.structure_id}"
           end
+
         end
       end
     end

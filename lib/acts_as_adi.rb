@@ -72,8 +72,11 @@ module Younety
             "public/images/cache/adis/#{self.id}"
           end
 
-           #adi methods 
+          def customizable_option_cache_file_path(customizable, option)
+             "cache/structures/#{self.badge.structure_id}/options/#{customizable.id}/#{option.option}" 
+          end
 
+          #adi methods 
 
           def embed_code(format = "gif", pub = true, ismap = false )
             @embed_code ||=  self.adi.embed_code(format, pub, ismap )
@@ -102,11 +105,16 @@ module Younety
           #customization methods 
 
           def customizables #TODO figure out why this is not caching  
-            @customizables ||= Younety::Remote::Customizable.find(:all, :params => { :structure_id => self.adi.structure_id } ) 
+             Younety::Remote::Customizable.find(:all, :params => { :structure_id => self.adi.structure_id } ) 
           end
 
-          def customizable(customizable_id) 
-             Younety::Remote::Customizable.find(:first, :params => {:id => customizable_id , :structure_id => self.adi.structure_id } ) 
+          def get_customizable(customizable_id) 
+             #TODO: This is ugly and inefficient, but it works for now.
+             customizables = Younety::Remote::Customizable.find(:all, :params => { :structure_id => self.adi.structure_id } ) 
+             customizables.each do |c|
+                return c if c.id.to_s == customizable_id.to_s
+             end
+             return nil
           end
 
           def get_customization_by_name(name) # Deprecated?

@@ -4,7 +4,7 @@ module Younety
       self.site += "/structures/:structure_id"
 
       def options #TODO is this caching or not?
-        @options ||= Option.find(:all, :params => {:structure_id => self.prefix_options[:structure_id] , :customizable_id  => self.id } )
+         Option.find(:all, :params => {:structure_id => self.prefix_options[:structure_id] , :customizable_id  => self.id } )
       end
 
     end
