@@ -116,6 +116,13 @@ module Younety
              end
              return nil
           end
+             
+          def get_customization_option_value(customization, option_id) #this seems wrong
+             customization.options.each do |option|
+               return option.option if option.id.to_s == option_id.to_s
+              end
+             return ''
+          end
 
           def get_customization_by_name(name) # Deprecated?
             Younety::Remote::Customization.find( URI::escape(name), :params => { :adi_id => self.adi_id } )
