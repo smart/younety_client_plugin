@@ -1,8 +1,13 @@
+require 'adi/customization'
+require 'adi/share'
+require 'adi/statistics'
+
 module Younety
   module Rails #:nodoc:
     module ModelExtentions
       module ActsAsAdi
-      
+        
+        
         module ClassMethods
 
           def new_from_factory( factory )
@@ -17,7 +22,10 @@ module Younety
         end
 
         module InstanceMethods 
-
+          include ActsAsAdi::Customization
+          include ActsAsAdi::Statistics
+          include ActsAsAdi::Share
+          
           #local caching methods
 
           def adi 
@@ -76,37 +84,7 @@ module Younety
              "cache/structures/#{self.badge.structure_id}/options/#{customizable.id}/#{option.option}" 
           end
 
-          # share methods
-          def find_all_web_applications
-             Younety::Remote::Webapp.find_all_with_shares
-          end
-
-          def find_all_shares_by_webapp_id(webapp_id)
-              Younety::Remote::Share.find_all_by_webapp_id(webapp_id)
-          end
-
-          def get_share_by_id(share_id)
-             Younety::Remote::Share.find(share_id)
-          end
-
-          def share_it(share, values)
-             share.share_it(self.adi_id, values)
-          end
-        
-          def get_embed_share
-             Younety::Remote::Share.find("Embed%20Code", :params => {:adi_id => @user_badge.adi_id }  )
-          end
-
-          def embed_code(format = "gif", pub = true, ismap = false )
-            @embed_code ||=  self.adi.embed_code(format, pub, ismap )
-          end
-
-          #adi methods 
-
-          def statistics
-            @statistics ||= self.adi.stats_summary
-          end
-
+ 
           def adi_public_path #TODO investigate whether or not this is broken and/or if it's necessary?
             @adi_public_path ||= self.adi.public_path
           end
@@ -123,47 +101,8 @@ module Younety
             self.adi.reset
           end
 
-          #customization methods 
-
-          def customizables #TODO figure out why this is not caching  
-             Younety::Remote::Customizable.find(:all, :params => { :structure_id => self.adi.structure_id } ) 
-          end
-
-          def get_customizable(customizable_id) 
-             #TODO: This is ugly and inefficient, but it works for now.
-             customizables = Younety::Remote::Customizable.find(:all, :params => { :structure_id => self.adi.structure_id } ) 
-             customizables.each do |c|
-                return c if c.id.to_s == customizable_id.to_s
-             end
-             return nil
-          end
-             
-          def get_customization_option_value(customization, option_id) #this seems wrong
-             customization.options.each do |option|
-               return option.option if option.id.to_s == option_id.to_s
-              end
-             return ''
-          end
-
-          def get_customization_by_name(name) # Deprecated?
-            Younety::Remote::Customization.find( URI::escape(name), :params => { :adi_id => self.adi_id } )
-          end
-
-          def set_customization_value(custom_name, value = '' , image_data = nil )
-            Younety::Remote::Customization.set_value( self.adi_id , URI::escape(custom_name) , value, image_data )
-          end
-
-          def reset_customizations
-            Younety::Remote::Customization.reset( self.adi_id )
-            @customizations = {} #clear the cache of customizations
-          end
-
-          def commit_customizations
-            Younety::Remote::Customization.commit( self.adi_id )
-          end
-
+ 
         end
-        
       end
     end
   end
