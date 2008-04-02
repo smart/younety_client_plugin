@@ -76,6 +76,7 @@ module Younety
              "cache/structures/#{self.badge.structure_id}/options/#{customizable.id}/#{option.option}" 
           end
 
+          # share methods
           def find_all_web_applications
              Younety::Remote::Webapp.find_all_with_shares
           end
@@ -91,16 +92,16 @@ module Younety
           def share_it(share, values)
              share.share_it(self.adi_id, values)
           end
-         
-          def get_embed_code
-           Younety::Remote::Share.find("Embed%20Code", :params => {:adi_id => @user_badge.adi_id }  )
+        
+          def get_embed_share
+             Younety::Remote::Share.find("Embed%20Code", :params => {:adi_id => @user_badge.adi_id }  )
           end
-
-          #adi methods 
 
           def embed_code(format = "gif", pub = true, ismap = false )
             @embed_code ||=  self.adi.embed_code(format, pub, ismap )
           end
+
+          #adi methods 
 
           def statistics
             @statistics ||= self.adi.stats_summary
