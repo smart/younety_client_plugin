@@ -1,6 +1,6 @@
 class FacebookYouser < YouserAuthenticator
+  
   acts_as_facebook_user
-
 
   def self.find_or_create_by_facebook_session(sess)
     unless sess.is_ready?

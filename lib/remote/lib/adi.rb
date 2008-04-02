@@ -24,14 +24,29 @@ module Younety
        #deactivate_path = self.class.collection_path(self.prefix_options) + ";deactivate"
        #(connection.put(deactivate_path, to_xml).code == "200") ? true : false
       end
+      
+      def stats_summary
+        self.get(:stats_summary)
+      end
+     
+      def customizations
+       self.get(:customizations)
+      end
+
+      def embed_code(format = "gif", pub = true, ismap = false)
+        self.get(:embed_code, {:adi_format => format, :public => pub, :ismap => ismap})
+      end
   
       def public_path
-      "#{ADISERVER}/badges/#{self.public_id}" 
+       "#{YOUNETY['url']}/badges/#{self.public_id}" 
       end
   
+      #depricated
       def code_snippet
-       "<a href='#{ADISERVER}.html' src=#{self.public_path}.png></a>" 
+       embed_code
       end
     end
+
+
   end
 end

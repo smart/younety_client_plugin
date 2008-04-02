@@ -1,4 +1,7 @@
-require "acts_as_youser"
+require 'acts_as_structure'
+require 'acts_as_youser'
+require 'acts_as_adi'
+require 'RMagick'      
 module Younety
   module Rails
     module ModelExtensions
@@ -10,9 +13,14 @@ module Younety
       end
 
       module ActsAsMethods # :nodoc:all
-        def acts_as_younety_user
-          include Younety::Rails::ModelExtensions::ActsAsYounetyUser::InstanceMethods
-          extend Younety::Rails::ModelExtensions::ActsAsYounetyUser::ClassMethods
+        def acts_as_structure
+          include Younety::Rails::ModelExtentions::ActsAsStructure::InstanceMethods
+          extend Younety::Rails::ModelExtentions::ActsAsStructure::ClassMethods        
+        end
+        
+        def acts_as_adi
+          include Younety::Rails::ModelExtentions::ActsAsAdi::InstanceMethods
+          extend Younety::Rails::ModelExtentions::ActsAsAdi::ClassMethods        
         end
         
         def acts_as_youser
@@ -36,9 +44,8 @@ module Younety
           @value_column = options[:value_column]  || :value 
         end
       end
-      
-      
-      module ActsAsPointSpec
+            
+     module ActsAsPointSpec
         
           module ClassMethods
              attr_accessor :point_spec_id

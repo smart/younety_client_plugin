@@ -1,10 +1,23 @@
 module Younety
   module Remote
     class Share < YounetyResource
-      colection_name = "share"
+      #colection_name = "share"
+      
+      def self.find_all_by_webapp_id(webapp_id)
+        Share.find(:all, :params => {:webapp_id => webapp_id})
+      end
       
       def self.share_it(share_id, adi_id, params = {})
-        Share.new(:id => share_id).post(:go, { :adi_id => adi_id, :share_it => params})
+        Share.new(:id => share_id).share_it(adi_id, params)
+      end
+      
+      def share_it(adi_id, params = {})
+        response = self.post(:go, { :adi_id => adi_id, :share_it => params})
+        if response.code == "200"
+          return Hash.from_xml(response.body)['hash']
+        else
+          return false
+        end 
       end
       
       def icon_path

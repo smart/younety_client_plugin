@@ -9,10 +9,10 @@ module Younety
         def self.commit(adi_id)
           Customization.put(:commit, :adi_id => adi_id).code == "200" ? true : false 
         end
-  
-        #def commit
-        #  Customization.put(:commit, :adi_id => @prefix_options[:adi_id])
-        #end
+        
+        def self.reset
+          Customization.put(:reset, :adi_id => adi_id).code == "200" ? true : false 
+        end
         
         def self.set_value(adi_id, customization_name, value, image_data = nil)
           unless image_data.blank?
@@ -32,6 +32,7 @@ module Younety
           return "edges" if name == "Bottom Color"
           return "fonts" if name == "Statement Text"
           return "images" if name == "Background Image"
+          return "affiliation" if name == "affiliation"
           return "font.png"
         end
     end
