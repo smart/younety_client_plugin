@@ -76,6 +76,26 @@ module Younety
              "cache/structures/#{self.badge.structure_id}/options/#{customizable.id}/#{option.option}" 
           end
 
+          def find_all_web_applications
+             Younety::Remote::Webapp.find_all_with_shares
+          end
+
+          def find_all_shares_by_webapp_id(webapp_id)
+              Younety::Remote::Share.find_all_by_webapp_id(webapp_id)
+          end
+
+          def get_share_by_id(share_id)
+             Younety::Remote::Share.find(share_id)
+          end
+
+          def share_it(share, values)
+             share.share_it(self.adi_id, values)
+          end
+         
+          def get_embed_code
+           Younety::Remote::Share.find("Embed%20Code", :params => {:adi_id => @user_badge.adi_id }  )
+          end
+
           #adi methods 
 
           def embed_code(format = "gif", pub = true, ismap = false )
@@ -141,19 +161,6 @@ module Younety
             Younety::Remote::Customization.commit( self.adi_id )
           end
 
-          def icon_class 
-            #TODO what do we do about this method
-          end
-
-          # share methods
-          def find_all_shares_by_webapp_id(webapp_id)
-            Younety::Remote::Share.find_all_by_webapp_id(webapp_id)
-          end
-
-          def share_adi(share_id, params = {})
-            Share.share_it(share_id, self.adi_id, params )  
-          end
-        
         end
         
       end
