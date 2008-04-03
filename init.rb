@@ -47,4 +47,8 @@ else
 end
 
 require 'younety'
-require 'model_extenions'
+require 'RMagick'
+require 'acts_as_structure'
+require 'acts_as_adi'
+ActiveRecord::Base.send(:include, Younety::Rails::ActsAsAdi)
+ActiveRecord::Base.send(:include, Younety::Rails::ActsAsStructure)
