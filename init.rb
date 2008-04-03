@@ -46,28 +46,5 @@ else
   raise StandardError, "config/younety.yml does not exist."
 end
 
-require "model_extensions"
-require "controller_extentions"
-require "view_extentions"
-require "youser_authenticator"
-require "youser_authenticators/local_user"
-require "youser_authenticators/facebook_youser"
-require "youser_authenticators/open_id_youser"
-
-# inject methods to Rails MVC classes
-ActionView::Base.send(:include, Younety::Rails::ViewExtensions)
-ActionController::Base.send(:include, Younety::Rails::ControllerExtensions)
-ActiveRecord::Base.send(:include, Younety::Rails::ModelExtensions)
-
-require "remote/lib/younety_resource"
-require "remote/lib/younety_token"
-require "remote/lib/adi"
-require "remote/lib/auth"
-require "remote/lib/customization"
-require "remote/lib/data_element"
-require "remote/lib/share"
-require "remote/lib/stat"
-require "remote/lib/structure"
-require "remote/lib/webapp"
-require "remote/lib/customizable"
-require "remote/lib/option"
+require 'younety'
+require 'model_extenions'
