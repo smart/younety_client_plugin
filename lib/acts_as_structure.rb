@@ -35,24 +35,16 @@ module Younety
           "#{YOUNETY['url']}/adis/#{self.example_adi_id}.#{ext}" 
         end
 
-        def customizables 
-          #@customizables ||= structure.customizables
-          #Younety::Remote::Customizable.find( URI::escape(name), :params => { :adi_id => self.adi_id } )
-        end
-      
         def customizable(name)
           customizables.select { |custom| custom.name == name}
         end
       
         def retrieve_example_adi_file_data_from_adiserver(ext = "gif")
           begin
-            Magick::ImageList.new(URI.parse(example_path(ext)))  # I think you can do this
+            Magick::ImageList.new(URI.parse(example_path(ext)))
           rescue
             raise(Exception, "Unable to load remote adi")
           end
-            #response = Net::HTTP.get_response(URI.parse(remote_path)) #TODO put in exception handling
-            #image_data = Magick::Image.from_blob(response.body).first  
-            #image_data
         end
 
         def save_thumbnails(thumbs = [], opts = {}) #TODO consolidate into a utilities directory
@@ -74,7 +66,7 @@ module Younety
              FileUtils.mkdir_p( option_cache_path(customizable) )
              ext = option.option.match(/.*\.(\w+)/)[1]
              remote_path =  "#{YOUNETY['url']}/structures/#{self.structure_id}/customizables/#{customizable.id}/options/#{option.id}.#{ext}"
-             response = Net::HTTP.get_response(URI.parse(remote_path)) #TODO put in exception handling
+             response = Net::HTTP.get_response(URI.parse(remote_path)) 
              image_data = Magick::Image.from_blob(response.body).first  
              image_data.write(customizable_option_cache_file_path(customizable, option) )
           end
