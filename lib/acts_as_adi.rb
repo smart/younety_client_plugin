@@ -95,8 +95,13 @@ module Younety
            "cache/structures/#{self.badge.structure_id}/options/#{customizable.id}/#{option.option}" 
         end
 
+        # share methods
         def get_share_response(share, values = {} )
           share.share_it(self.adi_id, values)
+        end
+
+        def get_web_application(web_application_id)
+          web_app = Younety::Remote::Webapp.find(web_application_id)
         end
 
         def adi_public_path #TODO investigate whether or not this is broken and/or if it's necessary?
