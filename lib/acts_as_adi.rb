@@ -95,6 +95,21 @@ module Younety
            "cache/structures/#{self.badge.structure_id}/options/#{customizable.id}/#{option.option}" 
         end
 
+        def get_share_response(share, values = {} )
+          p '-----------------------------------'
+          p self.adi_id
+          response = share.share_it(self.adi_id, values)
+          p response
+          p '-----------------------------------'
+          p '-----------------------------------'
+          p '-----------------------------------'
+          p '-----------------------------------'
+          response
+          p '-----------------------------------'
+          p '-----------------------------------'
+          p '-----------------------------------'
+          p '-----------------------------------'
+        end
 
         def adi_public_path #TODO investigate whether or not this is broken and/or if it's necessary?
           @adi_public_path ||= self.adi.public_path
